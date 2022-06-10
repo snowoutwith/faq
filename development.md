@@ -355,15 +355,11 @@ namespace SamplePlugin
     {
         public string Name => "SamplePlugin";
 
-        private DalamudPluginInterface pi;
-
         public delegate IntPtr RenderDelegate(IntPtr renderManager);
         private Hook<RenderDelegate> renderDelegateHook;
 
-        public void Initialize(DalamudPluginInterface pluginInterface, SigScanner sigScanner)
+        public void Initialize(SigScanner sigScanner)
         {
-            this.pi = pluginInterface;
-
             // Render::Manager::Render
             var Signature = "40 53 55 57 41 56 41 57 48 83 EC 60";
             var renderAddress = sigScanner.ScanText(Signature);
