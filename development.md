@@ -346,6 +346,8 @@ You should then be ready to go. An abbreviated example (only relevant portions s
 ```c#
 using Dalamud.Hooking;
 using Dalamud.Plugin;
+using Dalamud.Game;
+using Dalamud.Logging;
 
 namespace SamplePlugin
 {
@@ -358,13 +360,13 @@ namespace SamplePlugin
         public delegate IntPtr RenderDelegate(IntPtr renderManager);
         private Hook<RenderDelegate> renderDelegateHook;
 
-        public void Initialize(DalamudPluginInterface pluginInterface)
+        public void Initialize(DalamudPluginInterface pluginInterface, SigScanner sigScanner)
         {
             this.pi = pluginInterface;
 
             // Render::Manager::Render
             var Signature = "40 53 55 57 41 56 41 57 48 83 EC 60";
-            var renderAddress = this.pi.TargetModuleScanner.ScanText(Signature);
+            var renderAddress = sigScanner.ScanText(Signature);
 
             this.renderDelegateHook = new Hook<RenderDelegate>(renderAddress, this.RenderDetour);
             this.renderDelegateHook.Enable();
@@ -383,7 +385,6 @@ namespace SamplePlugin
         {
             this.renderDelegateHook.Disable();
             this.renderDelegateHook.Dispose();
-            this.pi.Dispose();
         }
     }
 }
